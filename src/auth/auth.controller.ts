@@ -1,67 +1,49 @@
 import {
-  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
   Req,
-  Request,
   Res,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
-import { UserService } from 'src/user/user.service';
+import { RegisterDto } from './models/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
-// import { request, Request, Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
-import { RegisterDto } from './models/register.dto';
+import { LoginDto } from './models/login.dto';
+import { UserService } from 'src/user/user.service';
+import { Request, Response } from 'express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 // passthrough => buat dapetin token dari front-end, passing ke backend
 @Controller('auth')
 export class AuthController {
   constructor(
-    private userService: UserService,
     private authService: AuthService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
   @Post('register')
   async register(@Body() body: RegisterDto) {
-    if (body.password !== body.password_confirm) {
-      throw new BadRequestException('Password do not match!');
-    }
-
-    const hashed = await bcrypt.hash(body.password, 12);
-
-    return this.authService.register({
-      email: body.email,
-      password: hashed,
-    });
+    return await this.authService.register(body);
   }
 
-  @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() request) {
-    return {
-      userId: request.user.id,
-      email: request.user.email,
-      token: this.authService.getTokenForUser(request.user),
-    };
+  async login(@Body() body: LoginDto, @Res({ passthrough: true }) response: Response) {
+    return await this.authService.login(body, response);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('user')
-  async User(@Req() request) {
-    return request.user;
+  @Get('myProfile')
+  async User(@Req() request: Request) {
+    const id = await this.authService.myProfile(request);
+    return this.userService.findOne({ id });
   }
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) response) {
-    response.clearCookie('jwt');
+    response.clearCookie('auth_cookie');
     return {
       message: 'Success Logout!',
     };
