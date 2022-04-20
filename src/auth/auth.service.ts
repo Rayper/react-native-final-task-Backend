@@ -20,11 +20,10 @@ export class AuthService {
     return this.userRepository.findOne(body, response);
   }
 
-  async userById(request: Request): Promise<number> {
-    const cookie = request.cookies['jwt'];
-
-    const data = await this.jwtService.verifyAsync(cookie);
-
-    return data['id'];
+  public getTokenForUser(user: User): string {
+    return this.jwtService.sign({
+      email: user.email,
+      sub: user.id,
+    });
   }
 }

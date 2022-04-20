@@ -4,21 +4,20 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
-  NotFoundException,
   Post,
   Req,
+  Request,
   Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { RegisterDto } from './models/register.dto';
-import { LoginDto } from './models/login.dto';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
-import { Request, Response } from 'express';
-import { AuthGuard } from './auth.guard';
+// import { request, Request, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { RegisterDto } from './models/register.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 // passthrough => buat dapetin token dari front-end, passing ke backend
@@ -44,42 +43,25 @@ export class AuthController {
     });
   }
 
+  @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Body() body: LoginDto, @Res({ passthrough: true }) response: Response) {
-    // karena nested jadi pakai await
-    const user = await this.userService.findOne({ email: body.email });
-
-    // validasi ketika email tidak terdaftar
-    if (!user) {
-      throw new NotFoundException('Email is not registered!');
-    }
-
-    // // compare password yang ada dan password yang diinput
-    if (!(await bcrypt.compare(body.password, user.password))) {
-      throw new BadRequestException('Wrong Password!');
-    }
-
-    // signAsync(payloadnya id)
-    const jwt = await this.jwtService.signAsync({ id: user.id });
-
-    response.cookie('jwt', jwt, { httpOnly: true });
-
-    return user;
+  async login(@Request() request) {
+    return {
+      userId: request.user.id,
+      email: request.user.email,
+      token: this.authService.getTokenForUser(request.user),
+    };
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('user')
-  async User(@Req() request: Request) {
-    const id = await this.authService.userById(request);
-
-    return this.userService.findOne({ id });
+  async User(@Req() request) {
+    return request.user;
   }
 
-  @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(@Res({ passthrough: true }) response: Response) {
+  async logout(@Res({ passthrough: true }) response) {
     response.clearCookie('jwt');
-
     return {
       message: 'Success Logout!',
     };
