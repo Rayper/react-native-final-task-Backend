@@ -32,6 +32,8 @@ export class AuthService {
     const hashed = await bcrypt.hash(body.password, 12);
 
     return this.userService.create({
+      firstName: body.firstName,
+      lastName: body.lastName,
       email: body.email,
       password: hashed,
     });
@@ -51,7 +53,7 @@ export class AuthService {
       throw new BadRequestException('Wrong Password!');
     }
 
-    const jwt = await this.jwtService.signAsync({ id: user.id });
+    const jwt = await this.jwtService.signAsync({ id: user.userId });
     response.cookie('auth_cookie', jwt, { httpOnly: true });
 
     return user;

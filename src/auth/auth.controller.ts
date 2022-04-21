@@ -37,8 +37,8 @@ export class AuthController {
 
   @Get('myProfile')
   async User(@Req() request: Request) {
-    const id = await this.authService.myProfile(request);
-    return this.userService.findOne({ id });
+    const userId = await this.authService.myProfile(request);
+    return this.userService.findOne({ userId });
   }
 
   @Post('logout')
