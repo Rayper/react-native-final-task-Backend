@@ -25,7 +25,7 @@ export class AuthService {
       throw new BadRequestException('Email already exist!');
     }
 
-    if (body.password !== body.password_confirm) {
+    if (body.password !== body.confirmpassword) {
       throw new BadRequestException('Password do not match!');
     }
 
@@ -39,7 +39,7 @@ export class AuthService {
     });
   }
 
-  async login(
+  async loginWithCookie(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<User> {
@@ -54,6 +54,7 @@ export class AuthService {
     }
 
     const jwt = await this.jwtService.signAsync({ id: user.userId });
+
     response.cookie('auth_cookie', jwt, { httpOnly: true });
 
     return user;

@@ -17,5 +17,5 @@ export class RegisterDto {
 
   @IsNotEmpty()
   @Length(6)
-  password_confirm: string;
+  confirmpassword: string;
 }
