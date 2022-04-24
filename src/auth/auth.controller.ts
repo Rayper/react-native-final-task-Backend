@@ -4,7 +4,9 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -17,6 +19,7 @@ import { LoginDto } from './models/login.dto';
 import { UserService } from 'src/user/user.service';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateProfileDto } from './models/updateProfile.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 // passthrough => buat dapetin token dari front-end, passing ke backend
@@ -40,10 +43,23 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('myProfile')
-  async User(@Req() request: Request) {
+  async user(@Req() request: Request) {
     const userId = await this.authService.myProfile(request);
 
     return this.userService.findOne({ userId });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('updateProfile/:userId')
+  async updateProfile(@Param('userId') id: number, @Body() body: UpdateProfileDto) {
+    await this.authService.updateProfile(id, body);
+
+    return {
+      message: 'Update Profile Success!',
+      firstName: body.firstName,
+      lastName: body.lastName,
+      email: body.email,
+    };
   }
 
   @UseGuards(AuthGuard('jwt'))

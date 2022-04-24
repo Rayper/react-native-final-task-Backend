@@ -1,12 +1,10 @@
-import { BadRequestException, Body, Injectable, NotFoundException, Res } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
-import { Request, Response } from 'express';
-import { LoginDto } from './models/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,10 +37,7 @@ export class AuthService {
     });
   }
 
-  async loginWithCookie(
-    @Body() body: LoginDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<User> {
+  async loginWithCookie(body, response): Promise<User> {
     const user = await this.userService.findOne({ email: body.email });
 
     if (!user) {
@@ -60,11 +55,21 @@ export class AuthService {
     return user;
   }
 
-  async myProfile(request: Request): Promise<number> {
+  async myProfile(request): Promise<number> {
     const cookie = request.cookies['auth_cookie'];
 
     const data = await this.jwtService.verifyAsync(cookie);
 
     return data['id'];
+  }
+
+  async updateProfile(userId: number, body): Promise<User> {
+    const { ...data } = body;
+
+    await this.userService.update(userId, {
+      ...data,
+    });
+
+    return this.userService.findOne({ userId });
   }
 }
