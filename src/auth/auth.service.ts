@@ -55,7 +55,7 @@ export class AuthService {
     return user;
   }
 
-  async myProfile(request): Promise<number> {
+  async userId(request): Promise<number> {
     const cookie = request.cookies['auth_cookie'];
 
     const data = await this.jwtService.verifyAsync(cookie);
@@ -68,6 +68,30 @@ export class AuthService {
 
     await this.userService.update(userId, {
       ...data,
+    });
+
+    return this.userService.findOne({ userId });
+  }
+
+  async updateInfo(request, body) {
+    const userId = await this.userId(request);
+
+    await this.userService.update(userId, body);
+
+    return this.userService.findOne({ userId });
+  }
+
+  async updatePassword(request, password, confirmpassword) {
+    if (password !== confirmpassword) {
+      throw new BadRequestException('Password do not match!');
+    }
+
+    const userId = await this.userId(request);
+
+    const hashed = await bcrypt.hash(password, 12);
+
+    await this.userService.update(userId, {
+      password: hashed,
     });
 
     return this.userService.findOne({ userId });

@@ -44,7 +44,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('myProfile')
   async user(@Req() request: Request) {
-    const userId = await this.authService.myProfile(request);
+    const userId = await this.authService.userId(request);
 
     return this.userService.findOne({ userId });
   }
@@ -59,6 +59,28 @@ export class AuthController {
       firstName: body.firstName,
       lastName: body.lastName,
       email: body.email,
+    };
+  }
+
+  @Put('UpdatePersonalInfo')
+  async updatePersonalInfo(@Req() request: Request, @Body() body: UpdateProfileDto) {
+    await this.authService.updateInfo(request, body);
+
+    return {
+      message: 'Update Peronsal Info Success!',
+    };
+  }
+
+  @Put('updatePassword')
+  async updatePassword(
+    @Req() request: Request,
+    @Body('password') password: string,
+    @Body('confirmpassword') confirmpassword: string,
+  ) {
+    await this.authService.updatePassword(request, password, confirmpassword);
+
+    return {
+      message: 'Update Password Success!',
     };
   }
 
