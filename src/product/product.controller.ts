@@ -23,7 +23,7 @@ export class ProductController {
 
   @Get('details/:productId')
   async get(@Param('productId') productId: number) {
-    return this.productService.findOne({ productId });
+    return this.productService.getProductById({ productId });
   }
 
   // masih failed

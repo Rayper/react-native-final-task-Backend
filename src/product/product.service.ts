@@ -21,8 +21,8 @@ export class ProductService {
     return await this.sizeRepository.find();
   }
 
-  async findOne(condition, relations = []): Promise<any> {
-    const product = await this.productRepository.findOne(condition, { relations });
+  async getProductById(condition: any): Promise<Product> {
+    const product = await this.productRepository.findOne(condition, { relations: ['sizes'] });
 
     if (!product) {
       throw new NotFoundException('Product is not found!');
