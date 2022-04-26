@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { addProductDto } from './models/dto/add-product.dto';
 import { ProductService } from './product.service';
 
@@ -19,6 +19,11 @@ export class ProductController {
   @Post('testCreateProducts')
   async testCreateProduct() {
     return await this.productService.testCreateProducts();
+  }
+
+  @Get('details/:productId')
+  async get(@Param('productId') productId: number) {
+    return this.productService.findOne({ productId });
   }
 
   // masih failed
