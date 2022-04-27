@@ -10,6 +10,9 @@ export class Product {
   name: string;
 
   @Column()
+  image: string;
+
+  @Column()
   brand: string;
 
   @Column()
@@ -18,7 +21,11 @@ export class Product {
   @Column()
   price: number;
 
-  @ManyToMany(() => Size, (size) => size.name, { cascade: true })
-  @JoinTable()
+  @ManyToMany(() => Size, { cascade: true })
+  @JoinTable({
+    name: 'mapping_product_sizes',
+    joinColumn: { name: 'productId', referencedColumnName: 'productId' },
+    inverseJoinColumn: { name: 'sizeId', referencedColumnName: 'sizeId' },
+  })
   sizes: Size[];
 }

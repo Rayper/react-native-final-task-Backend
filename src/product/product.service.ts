@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { addProductDto } from './models/dto/add-product.dto';
 import { Product } from './models/entities/product.entity';
 import { Size } from './models/entities/size.entity';
 
@@ -21,8 +22,8 @@ export class ProductService {
     return await this.sizeRepository.find();
   }
 
-  async getProductById(condition: any): Promise<Product> {
-    const product = await this.productRepository.findOne(condition, { relations: ['sizes'] });
+  async getProductById(condition, relations = []): Promise<Product> {
+    const product = await this.productRepository.findOne(condition, { relations });
 
     if (!product) {
       throw new NotFoundException('Product is not found!');
@@ -33,42 +34,34 @@ export class ProductService {
 
   async testCreateProducts(): Promise<Product> {
     const product = new Product();
+
     const size1 = await this.sizeRepository.findOne(1);
     const size2 = await this.sizeRepository.findOne(2);
+    const size3 = await this.sizeRepository.findOne(3);
+    const size4 = await this.sizeRepository.findOne(4);
 
-    product.name = 'Test Name';
-    product.description = 'Test Decription';
-    product.brand = 'Test Brand';
-    product.price = 220000;
-    product.sizes = [size1, size2];
+    product.name = 'Red Nike Hoodie';
+    product.description = 'Nike Hoodie with cool Red Color';
+    product.image = '../../assets/images/default_image.jpg';
+    product.brand = 'Nike';
+    product.price = 650000;
+    product.sizes = [size1, size2, size3];
 
     return await this.productRepository.save(product);
   }
 
-  async addProducts(data: any): Promise<Product> {
-    const product = new Product();
-
+  async addProducts(data): Promise<Product> {
     const size1 = await this.sizeRepository.findOne(1);
     const size2 = await this.sizeRepository.findOne(2);
+    const size3 = await this.sizeRepository.findOne(3);
+    const size4 = await this.sizeRepository.findOne(4);
 
-    product.name = data.name;
-    product.description = data.description;
-    product.brand = data.brand;
-    product.price = data.price;
-    product.sizes = [size1, size2];
-    // // Promise.all => menunggu semua promise lain yang masih berjalan hingga semuanya selesai
-    // product.sizes = await Promise.all(
-    //   // search size yang available
-    //   data.sizes.map(async (size) => {
-    //     const findSize = await this.sizeRepository.findOne({ name: size.name });
+    if (data.sizes !== size1 || size2 || size3 || size4) {
+      throw new NotFoundException('Sizes is not available!');
+    }
 
-    //     if (findSize) {
-    //       return findSize;
-    //     } else {
-    //       throw new NotFoundException('Size is not available');
-    //     }
-    //   }),
-    // );
-    return await this.productRepository.save(product);
+    console.log(Size);
+
+    return await this.productRepository.save(data);
   }
 }

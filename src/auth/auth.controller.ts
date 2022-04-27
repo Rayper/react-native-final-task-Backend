@@ -19,7 +19,6 @@ import { LoginDto } from './models/login.dto';
 import { UserService } from 'src/user/user.service';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { UpdateProfileDto } from './models/updateProfile.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 // passthrough => buat dapetin token dari front-end, passing ke backend
@@ -37,51 +36,14 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() body: LoginDto, @Res({ passthrough: true }) response: Response) {
-    return await this.authService.loginWithCookie(body, response);
+  async login(@Body() body: LoginDto) {
+    return await this.authService.loginWithToken(body);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('myProfile')
   async user(@Req() request: Request) {
-    const userId = await this.authService.userId(request);
-
-    return this.userService.findOne({ userId });
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Put('updateProfile/:userId')
-  async updateProfile(@Param('userId') id: number, @Body() body: UpdateProfileDto) {
-    await this.authService.updateProfile(id, body);
-
-    return {
-      message: 'Update Profile Success!',
-      firstName: body.firstName,
-      lastName: body.lastName,
-      email: body.email,
-    };
-  }
-
-  @Put('UpdatePersonalInfo')
-  async updatePersonalInfo(@Req() request: Request, @Body() body: UpdateProfileDto) {
-    await this.authService.updateInfo(request, body);
-
-    return {
-      message: 'Update Peronsal Info Success!',
-    };
-  }
-
-  @Put('updatePassword')
-  async updatePassword(
-    @Req() request: Request,
-    @Body('password') password: string,
-    @Body('confirmpassword') confirmpassword: string,
-  ) {
-    await this.authService.updatePassword(request, password, confirmpassword);
-
-    return {
-      message: 'Update Password Success!',
-    };
+    return request.user;
   }
 
   @UseGuards(AuthGuard('jwt'))

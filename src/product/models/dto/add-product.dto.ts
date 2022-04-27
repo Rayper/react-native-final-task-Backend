@@ -1,10 +1,5 @@
-/* eslint-disable prettier/prettier */
 import { IsNotEmpty } from 'class-validator';
-
-class Sizes {
-  @IsNotEmpty()
-  name: string;
-}
+import { Size } from '../entities/size.entity';
 
 export class addProductDto {
   @IsNotEmpty()
@@ -20,5 +15,5 @@ export class addProductDto {
   price: number;
 
   @IsNotEmpty()
-  sizes: Sizes[];
+  sizes: Size[];
 }

@@ -37,7 +37,7 @@ export class AuthService {
     });
   }
 
-  async loginWithCookie(body, response): Promise<User> {
+  async loginWithToken(body): Promise<{ user: User; token: string }> {
     const user = await this.userService.findOne({ email: body.email });
 
     if (!user) {
@@ -48,52 +48,18 @@ export class AuthService {
       throw new BadRequestException('Wrong Password!');
     }
 
-    const jwt = await this.jwtService.signAsync({ id: user.userId });
+    const token = this.userToken(user);
 
-    response.cookie('auth_cookie', jwt, { httpOnly: true });
-
-    return user;
+    return {
+      user: user,
+      token: token,
+    };
   }
 
-  async userId(request): Promise<number> {
-    const cookie = request.cookies['auth_cookie'];
-
-    const data = await this.jwtService.verifyAsync(cookie);
-
-    return data['id'];
-  }
-
-  async updateProfile(userId: number, body): Promise<User> {
-    const { ...data } = body;
-
-    await this.userService.update(userId, {
-      ...data,
+  public userToken(user: User): string {
+    return this.jwtService.sign({
+      email: user.email,
+      sub: user.userId,
     });
-
-    return this.userService.findOne({ userId });
-  }
-
-  async updateInfo(request, body) {
-    const userId = await this.userId(request);
-
-    await this.userService.update(userId, body);
-
-    return this.userService.findOne({ userId });
-  }
-
-  async updatePassword(request, password, confirmpassword) {
-    if (password !== confirmpassword) {
-      throw new BadRequestException('Password do not match!');
-    }
-
-    const userId = await this.userId(request);
-
-    const hashed = await bcrypt.hash(password, 12);
-
-    await this.userService.update(userId, {
-      password: hashed,
-    });
-
-    return this.userService.findOne({ userId });
   }
 }

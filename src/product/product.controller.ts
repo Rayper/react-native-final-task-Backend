@@ -11,7 +11,7 @@ export class ProductController {
     return await this.productService.findAllProducts();
   }
 
-  @Get('findAllsizes')
+  @Get('findAllSizes')
   async findAllSizes() {
     return await this.productService.findAllSizes();
   }
@@ -23,7 +23,7 @@ export class ProductController {
 
   @Get('details/:productId')
   async get(@Param('productId') productId: number) {
-    return this.productService.getProductById({ productId });
+    return this.productService.getProductById({ productId }, ['sizes']);
   }
 
   // masih failed
