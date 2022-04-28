@@ -9,7 +9,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ default: 'Image_not_available.png' })
   image: string;
 
   @Column()

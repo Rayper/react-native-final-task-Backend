@@ -51,17 +51,6 @@ export class ProductService {
   }
 
   async addProducts(data): Promise<Product> {
-    const size1 = await this.sizeRepository.findOne(1);
-    const size2 = await this.sizeRepository.findOne(2);
-    const size3 = await this.sizeRepository.findOne(3);
-    const size4 = await this.sizeRepository.findOne(4);
-
-    if (data.sizes !== size1 || size2 || size3 || size4) {
-      throw new NotFoundException('Sizes is not available!');
-    }
-
-    console.log(Size);
-
     return await this.productRepository.save(data);
   }
 }
