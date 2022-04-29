@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
+import { FavouriteModule } from './favourite/favourite.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ProductModule } from './product/product.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    FavouriteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

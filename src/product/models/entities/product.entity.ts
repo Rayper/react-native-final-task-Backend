@@ -1,4 +1,5 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Favourite } from 'src/favourite/models/favourite.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Size } from './size.entity';
 
 @Entity('products')
@@ -9,7 +10,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ default: 'Image_not_available.png' })
+  @Column({ default: 'default_image.jpg' })
   image: string;
 
   @Column()
@@ -28,4 +29,7 @@ export class Product {
     inverseJoinColumn: { name: 'sizeId', referencedColumnName: 'sizeId' },
   })
   sizes: Size[];
+
+  @ManyToOne(() => Favourite, (favourite) => favourite.product, { cascade: true })
+  favourites: Favourite[];
 }
