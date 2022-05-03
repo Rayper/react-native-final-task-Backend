@@ -50,7 +50,7 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  async addProducts(data): Promise<Product> {
-    return await this.productRepository.save(data);
+  async addProducts(data): Promise<any> {
+    return this.productRepository.save(data);
   }
 }

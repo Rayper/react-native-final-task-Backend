@@ -28,7 +28,10 @@ export class ProductController {
 
   // masih failed
   @Post('addProduct')
-  async addProduct(@Body() body: addProductDto) {
-    return await this.productService.addProducts(body);
+  async addProduct(@Body() body: addProductDto, @Body('sizes') ids: number[]) {
+    return await this.productService.addProducts({
+      ...body,
+      sizes: ids.map((sizeId) => ({ sizeId })),
+    });
   }
 }

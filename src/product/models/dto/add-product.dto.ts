@@ -1,5 +1,4 @@
 import { IsNotEmpty } from 'class-validator';
-import { Size } from '../entities/size.entity';
 
 export class addProductDto {
   @IsNotEmpty()
@@ -15,5 +14,5 @@ export class addProductDto {
   price: number;
 
   @IsNotEmpty()
-  sizes: Size[];
+  sizes: number[];
 }
