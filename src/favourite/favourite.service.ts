@@ -16,4 +16,15 @@ export class FavouriteService {
       relations: ['product'],
     });
   }
+
+  async addFavouritesProduct(userId: any, data: any): Promise<Favourite> {
+    return await this.favouriteRepository.save({
+      user: { userId: userId },
+      product: { productId: data.productId },
+    });
+  }
+
+  async deleteFavouritesProduct(favouriteId: number): Promise<any> {
+    return await this.favouriteRepository.delete({ id: favouriteId });
+  }
 }
