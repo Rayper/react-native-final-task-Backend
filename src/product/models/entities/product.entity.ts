@@ -1,5 +1,5 @@
 import { Favourite } from 'src/favourite/models/favourite.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Size } from './size.entity';
 
 @Entity('products')
@@ -30,6 +30,6 @@ export class Product {
   })
   sizes: Size[];
 
-  @ManyToOne(() => Favourite, (favourite) => favourite.product, { cascade: true })
+  @OneToMany(() => Favourite, (favourite) => favourite.product, { cascade: true })
   favourites: Favourite[];
 }

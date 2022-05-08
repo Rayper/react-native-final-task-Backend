@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Favourite } from './models/favourite.entity';
@@ -25,6 +25,12 @@ export class FavouriteService {
   }
 
   async deleteFavouritesProduct(favouriteId: number): Promise<any> {
+    const favouritesProduct = await this.favouriteRepository.findOne({ id: favouriteId });
+
+    if (!favouritesProduct) {
+      throw new NotFoundException('Favourites Product is not found!');
+    }
+
     return await this.favouriteRepository.delete({ id: favouriteId });
   }
 }

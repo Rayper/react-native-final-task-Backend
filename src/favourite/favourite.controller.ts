@@ -31,6 +31,6 @@ export class FavouriteController {
   @Delete('deleteFavouritesProduct/:id')
   @UseGuards(AuthGuard('jwt'))
   async deleteFavouritesProduct(@Param('id', ParseIntPipe) favouriteId: number) {
-    return await this.deleteFavouritesProduct(favouriteId);
+    return await this.favouriteService.deleteFavouritesProduct(favouriteId);
   }
 }

@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { Favourite } from 'src/favourite/models/favourite.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -28,6 +28,6 @@ export class User {
   @Exclude()
   password: string;
 
-  @ManyToOne(() => Favourite, (favourite) => favourite.user, { cascade: true })
+  @OneToMany(() => Favourite, (favourite) => favourite.user, { cascade: true })
   favourites: Favourite[];
 }
