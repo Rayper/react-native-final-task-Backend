@@ -1,6 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
+import { Cart } from 'src/cart/models/cart.entity';
 import { Favourite } from 'src/favourite/models/favourite.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -30,4 +31,7 @@ export class User {
 
   @OneToMany(() => Favourite, (favourite) => favourite.user, { cascade: true })
   favourites: Favourite[];
+
+  @OneToMany(() => Cart, (cart) => cart.user, { cascade: true })
+  carts: Cart[];
 }

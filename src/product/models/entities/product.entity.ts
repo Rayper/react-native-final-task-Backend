@@ -1,3 +1,4 @@
+import { Cart } from 'src/cart/models/cart.entity';
 import { Favourite } from 'src/favourite/models/favourite.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Size } from './size.entity';
@@ -22,7 +23,7 @@ export class Product {
   @Column()
   price: number;
 
-  @ManyToMany(() => Size, { cascade: true })
+  @ManyToMany(() => Size, { cascade: true, eager: true })
   @JoinTable({
     name: 'mapping_product_sizes',
     joinColumn: { name: 'productId', referencedColumnName: 'productId' },
@@ -32,4 +33,7 @@ export class Product {
 
   @OneToMany(() => Favourite, (favourite) => favourite.product, { cascade: true })
   favourites: Favourite[];
+
+  @OneToMany(() => Cart, (cart) => cart.product, { cascade: true })
+  carts: Cart[];
 }

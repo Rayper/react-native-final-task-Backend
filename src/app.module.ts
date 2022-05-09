@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
 import { FavouriteModule } from './favourite/favourite.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FavouriteModule } from './favourite/favourite.module';
       synchronize: true,
     }),
     FavouriteModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],
